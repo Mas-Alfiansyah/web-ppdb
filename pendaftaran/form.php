@@ -3,22 +3,14 @@
 require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../helpers/auth_helper.php';
 require_once __DIR__ . '/../helpers/security.php';
+require_once __DIR__ . '/../helpers/data_helper.php';
 require_once __DIR__ . '/../config/database.php';
 
 require_login();
 $user_id = current_user_id();
 
-// Fetch Student Data
-$stmt = $conn->prepare("
-    SELECT s.* 
-    FROM siswa s 
-    JOIN akun_siswa a ON s.id = a.siswa_id 
-    WHERE a.id = ?
-");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$student = $stmt->get_result()->fetch_assoc();
-
+// Fetch Student Data using centralized helper
+$student = get_student_data($user_id);
 if (!$student) die("Data siswa tidak ditemukan.");
 
 // Handle Update
@@ -37,13 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
 
     $success = "Biodata berhasil diperbarui.";
-    // Refresh data
-    $student['nama_lengkap'] = $nama;
-    $student['nisn'] = $nisn;
-    $student['jk'] = $jk;
-    $student['tempat_lahir'] = $tempat;
-    $student['tanggal_lahir'] = $tanggal;
-    $student['alamat'] = $alamat;
+
+    // Refresh data using centralized helper
+    $student = get_student_data($user_id);
 }
 
 $title = "Lengkapi Biodata";

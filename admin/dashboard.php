@@ -3,20 +3,16 @@
 require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../helpers/auth_helper.php';
 require_once __DIR__ . '/../helpers/security.php';
+require_once __DIR__ . '/../helpers/data_helper.php';
 require_once __DIR__ . '/../config/database.php';
 
 require_admin();
 
-// Get Active Tahun Ajaran
-$ta_result = $conn->query("SELECT tahun FROM tahun_ajaran WHERE status = 'aktif' LIMIT 1");
-$active_ta = $ta_result->fetch_assoc()['tahun'] ?? 'Tidak Ada';
+// Get Active Tahun Ajaran using centralized helper
+$active_ta = get_active_tahun_ajaran();
 
-// Stats
-$stats = [];
-$stats['total'] = $conn->query("SELECT COUNT(*) as c FROM siswa")->fetch_assoc()['c'];
-$stats['lulus'] = $conn->query("SELECT COUNT(*) as c FROM siswa WHERE status = 'lulus'")->fetch_assoc()['c'];
-$stats['pending'] = $conn->query("SELECT COUNT(*) as c FROM siswa WHERE status = 'pending'")->fetch_assoc()['c'];
-$stats['tidak_lulus'] = $conn->query("SELECT COUNT(*) as c FROM siswa WHERE status = 'tidak_lulus'")->fetch_assoc()['c'];
+// Get real-time stats using centralized helper
+$stats = get_dashboard_stats();
 
 $title = "Dashboard Admin";
 include __DIR__ . '/../templates/header.php';

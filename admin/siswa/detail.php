@@ -39,17 +39,26 @@ include __DIR__ . '/../../templates/sidebar_admin.php';
             <h1 class="text-3xl font-black text-slate-900 tracking-tight"><?= xss_clean($row['nama_lengkap']) ?></h1>
         </div>
 
-        <!-- Status Dropdown (AJAX) -->
-        <div class="relative">
-            <select id="statusSelect" onchange="updateStatus(<?= $id ?>, this.value)"
-                class="appearance-none bg-white border border-slate-200 text-slate-800 font-black px-6 py-3 pr-10 rounded-2xl shadow-lg shadow-slate-200 cursor-pointer focus:ring-4 focus:ring-primary/10 transition-all uppercase tracking-widest text-sm">
-                <option value="pending" <?= $row['status'] == 'pending' ? 'selected' : '' ?>>Pending</option>
-                <option value="lulus" <?= $row['status'] == 'lulus' ? 'selected' : '' ?>>Lulus</option>
-                <option value="tidak_lulus" <?= $row['status'] == 'tidak_lulus' ? 'selected' : '' ?>>Tidak Lulus</option>
-                <option value="cadangan" <?= $row['status'] == 'cadangan' ? 'selected' : '' ?>>Cadangan</option>
-            </select>
-            <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-500">
-                <iconify-icon icon="solar:alt-arrow-down-bold-duotone"></iconify-icon>
+        <div class="flex items-center gap-3">
+            <!-- PDF Export Button -->
+            <a href="../laporan/export_pdf.php?id=<?= $id ?>" target="_blank"
+                class="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-2xl font-black shadow-lg shadow-rose-200 transition-all flex items-center active:scale-95">
+                <iconify-icon icon="solar:file-download-bold-duotone" class="mr-2 text-xl"></iconify-icon>
+                Export PDF
+            </a>
+
+            <!-- Status Dropdown (AJAX) -->
+            <div class="relative">
+                <select id="statusSelect" onchange="updateStatus(<?= $id ?>, this.value)"
+                    class="appearance-none bg-white border border-slate-200 text-slate-800 font-black px-6 py-3 pr-10 rounded-2xl shadow-lg shadow-slate-200 cursor-pointer focus:ring-4 focus:ring-primary/10 transition-all uppercase tracking-widest text-sm">
+                    <option value="pending" <?= $row['status'] == 'pending' ? 'selected' : '' ?>>Pending</option>
+                    <option value="lulus" <?= $row['status'] == 'lulus' ? 'selected' : '' ?>>Lulus</option>
+                    <option value="tidak_lulus" <?= $row['status'] == 'tidak_lulus' ? 'selected' : '' ?>>Tidak Lulus</option>
+                    <option value="cadangan" <?= $row['status'] == 'cadangan' ? 'selected' : '' ?>>Cadangan</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-500">
+                    <iconify-icon icon="solar:alt-arrow-down-bold-duotone"></iconify-icon>
+                </div>
             </div>
         </div>
     </div>
@@ -87,6 +96,10 @@ include __DIR__ . '/../../templates/sidebar_admin.php';
                         ['label' => 'Akte Kelahiran', 'path' => $row['akte_path'], 'field' => 'akte_status'],
                         ['label' => 'Kartu Keluarga', 'path' => $row['kk_path'], 'field' => 'kk_status'],
                         ['label' => 'Ijazah / SKL', 'path' => $row['ijazah_path'], 'field' => 'ijazah_status'],
+                        ['label' => 'KIP (Opsional)', 'path' => $row['kip_path'] ?? null, 'field' => 'kip_status'],
+                        ['label' => 'KTP Ayah', 'path' => $row['ktp_ayah_path'] ?? null, 'field' => 'ktp_ayah_status'],
+                        ['label' => 'KTP Ibu', 'path' => $row['ktp_ibu_path'] ?? null, 'field' => 'ktp_ibu_status'],
+                        ['label' => 'Foto 3x4', 'path' => $row['foto_path'] ?? null, 'field' => null],
                     ];
                     foreach ($docs as $doc):
                     ?>
@@ -97,9 +110,15 @@ include __DIR__ . '/../../templates/sidebar_admin.php';
                                 </div>
                                 <div>
                                     <p class="font-bold text-slate-800"><?= $doc['label'] ?></p>
-                                    <p class="text-[10px] font-black uppercase tracking-widest <?= $row[$doc['field']] == 'valid' ? 'text-emerald-500' : 'text-amber-500' ?>">
-                                        <?= $row[$doc['field']] ?>
-                                    </p>
+                                    <?php if ($doc['field']): ?>
+                                        <p class="text-[10px] font-black uppercase tracking-widest <?= $row[$doc['field']] == 'valid' ? 'text-emerald-500' : 'text-amber-500' ?>">
+                                            <?= $row[$doc['field']] ?>
+                                        </p>
+                                    <?php else: ?>
+                                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                            <?= $doc['path'] ? 'Uploaded' : 'Belum Upload' ?>
+                                        </p>
+                                    <?php endif; ?>
                                 </div>
                             </div>
 
@@ -112,8 +131,8 @@ include __DIR__ . '/../../templates/sidebar_admin.php';
                                         Lihat Berkas
                                     </a>
 
-                                    <!-- Verification Handlers (Optional if needed explicitly) -->
-                                    <?php if ($row[$doc['field']] != 'valid'): ?>
+                                    <!-- Verification Handlers (Only for documents with status field) -->
+                                    <?php if ($doc['field'] && $row[$doc['field']] != 'valid'): ?>
                                         <a href="verifikasi_berkas.php?id=<?= $id ?>&field=<?= $doc['field'] ?>&status=valid"
                                             class="inline-flex items-center bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white px-3 py-2 rounded-xl transition-all" title="Tandai Valid">
                                             <iconify-icon icon="solar:check-circle-bold-duotone" class="text-xl"></iconify-icon>

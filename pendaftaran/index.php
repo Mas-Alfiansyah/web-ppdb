@@ -3,23 +3,14 @@
 require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../helpers/auth_helper.php';
 require_once __DIR__ . '/../helpers/security.php';
+require_once __DIR__ . '/../helpers/data_helper.php';
 require_once __DIR__ . '/../config/database.php';
 
 require_login();
 $user_id = current_user_id();
 
-// Fetch Student Data
-$stmt = $conn->prepare("
-    SELECT s.*, ta.tahun as nama_tahun 
-    FROM siswa s 
-    JOIN akun_siswa a ON s.id = a.siswa_id 
-    LEFT JOIN tahun_ajaran ta ON s.tahun_ajaran_id = ta.id
-    WHERE a.id = ?
-");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$student = $stmt->get_result()->fetch_assoc();
-
+// Fetch Student Data using centralized helper
+$student = get_student_data($user_id);
 if (!$student) die("Data siswa tidak ditemukan.");
 
 $title = "Dashboard Siswa";

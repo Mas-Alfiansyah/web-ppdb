@@ -8,8 +8,8 @@ $user_role = $_SESSION['user_role'] ?? '';
         <div class="flex items-center justify-between h-20">
             <!-- Logo -->
             <a href="<?= base_url() ?>" class="flex items-center space-x-3 group">
-                <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/30 group-hover:scale-110 transition-transform">
-                    <iconify-icon icon="solar:globus-bold-duotone" class="text-2xl"></iconify-icon>
+                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/30 group-hover:scale-110 transition-transform">
+                    <img src="../public/images/logo smk.png" alt="Logo" class="w-full h-full object-contain">
                 </div>
                 <span class="font-black text-xl tracking-tight text-slate-800">PPDB <span class="text-primary">ONLINE</span></span>
             </a>
