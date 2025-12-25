@@ -1,0 +1,35 @@
+/* public/css/style.css */
+@layer components {
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 20px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #cbd5e1;
+    }
+}
+
+#sidebar {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    @apply !bg-primary !text-white !border-primary !rounded-xl !font-black !px-4 !py-2;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:not(.current) {
+    @apply !border-transparent !text-slate-400 !font-bold hover: !bg-slate-100 hover: !text-primary !rounded-xl !px-4 !py-2;
+}
+
+table.dataTable {
+    @apply !border-collapse !border-none !mb-0;
+}
